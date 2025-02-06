@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dice Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .dice {
+            font-size: 100px;
+            margin: 20px 0;
+        }
+        .btn {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .scoreboard {
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        .result {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Dice Game</h1>
+        <div class="scoreboard">
+            <p>Player 1 Score: <span id="player1Score">0</span></p>
+            <p>Player 2 Score: <span id="player2Score">0</span></p>
+        </div>
+        <div class="dice" id="dice">🎲</div>
+        <div>
+            <button class="btn" id="player1Roll">Player 1 Roll</button>
+            <button class="btn" id="player2Roll">Player 2 Roll</button>
+        </div>
+        <div class="result" id="result">Click a button to start the game!</div>
+    </div>
+
+    <script>
+        let player1Score = 0;
+        let player2Score = 0;
+        let currentPlayer = 1;
+
+        function rollDice() {
+            const diceFaces = [
+                '⚀', '⚁', '⚂', '⚃', '⚄', '⚅'
+            ];
+            const randomIndex = Math.floor(Math.random() * diceFaces.length);
+            const dice = diceFaces[randomIndex];
+            const diceValue = randomIndex + 1;
+
+            document.getElementById('dice').textContent = dice;
+            return diceValue;
+        }
+
+        function updateScores(player, score) {
+            if (player === 1) {
+                player1Score += score;
+                document.getElementById('player1Score').textContent = player1Score;
+            } else {
+                player2Score += score;
+                document.getElementById('player2Score').textContent = player2Score;
+            }
+        }
+
+        function checkWinner() {
+            if (player1Score >= 20) {
+                document.getElementById('result').textContent = 'Player 1 Wins!';
+                resetGame();
+            } else if (player2Score >= 20) {
+                document.getElementById('result').textContent = 'Player 2 Wins!';
+                resetGame();
+            }
+        }
+
+        function resetGame() {
+            player1Score = 0;
+            player2Score = 0;
+            currentPlayer = 1;
+            document.getElementById('player1Score').textContent = player1Score;
+            document.getElementById('player2Score').textContent = player2Score;
+            document.getElementById('result').textContent = 'Game Reset! Start Again!';
+        }
+
+        document.getElementById('player1Roll').addEventListener('click', () => {
+            if (currentPlayer === 1) {
+                const score = rollDice();
+                updateScores(1, score);
+                currentPlayer = 2;
+                document.getElementById('result').textContent = "Player 2's turn!";
+                checkWinner();
+            } else {
+                document.getElementById('result').textContent = "It's Player 2's turn!";
+            }
+        });
+
+        document.getElementById('player2Roll').addEventListener('click', () => {
+            if (currentPlayer === 2) {
+                const score = rollDice();
+                updateScores(2, score);
+                currentPlayer = 1;
+                document.getElementById('result').textContent = "Player 1's turn!";
+                checkWinner();
+            } else {
+                document.getElementById('result').textContent = "It's Player 1's turn!";
+            }
+        });
+    </script>
+</body>
+</html>

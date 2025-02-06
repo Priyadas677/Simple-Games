@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe with Score</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f3f3f3;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        .scoreboard {
+            margin-bottom: 20px;
+        }
+
+        .score {
+            display: inline-block;
+            margin: 0 20px;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 5px;
+        }
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+            border: 2px solid #ccc;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .cell.taken {
+            pointer-events: none;
+        }
+
+        .reset {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .reset:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tic-Tac-Toe</h1>
+    <div class="scoreboard">
+        <div class="score">Player X: <span id="scoreX">0</span></div>
+        <div class="score">Player O: <span id="scoreO">0</span></div>
+    </div>
+    <div class="board" id="board"></div>
+    <button class="reset" id="resetButton">Reset Game</button>
+
+    <script>
+        const boardElement = document.getElementById('board');
+        const scoreXElement = document.getElementById('scoreX');
+        const scoreOElement = document.getElementById('scoreO');
+        const resetButton = document.getElementById('resetButton');
+
+        let board = ['', '', '', '', '', '', '', '', ''];
+        let currentPlayer = 'X';
+        let score = { X: 0, O: 0 };
+        let gameActive = true;
+
+        const winningCombinations = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [2, 4, 6]
+        ];
+
+        function renderBoard() {
+            boardElement.innerHTML = '';
+            board.forEach((cell, index) => {
+                const cellElement = document.createElement('div');
+                cellElement.classList.add('cell');
+                if (cell) cellElement.classList.add('taken');
+                cellElement.textContent = cell;
+                cellElement.addEventListener('click', () => handleCellClick(index));
+                boardElement.appendChild(cellElement);
+            });
+        }
+
+        function handleCellClick(index) {
+            if (!gameActive || board[index]) return;
+
+            board[index] = currentPlayer;
+            renderBoard();
+
+            if (checkWin()) {
+                alert(`Player ${currentPlayer} wins!`);
+                score[currentPlayer]++;
+                updateScore();
+                resetBoard();
+                return;
+            }
+
+            if (board.every(cell => cell)) {
+                alert('Its a draw!');
+                resetBoard();
+                return;
+            }
+
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        }
+
+        function checkWin() {
+            return winningCombinations.some(combination => {
+                return combination.every(index => board[index] === currentPlayer);
+            });
+        }
+
+        function updateScore() {
+            scoreXElement.textContent = score.X;
+            scoreOElement.textContent = score.O;
+        }
+
+        function resetBoard() {
+            board = ['', '', '', '', '', '', '', '', ''];
+            currentPlayer = 'X';
+            gameActive = true;
+            renderBoard();
+        }
+
+        resetButton.addEventListener('click', () => {
+            score = { X: 0, O: 0 };
+            updateScore();
+            resetBoard();
+        });
+
+        renderBoard();
+    </script>
+</body>
+</html>
